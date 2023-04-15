@@ -10,6 +10,8 @@
       integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
       crossorigin="anonymous"
     />
+    <!--<script src="all.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <div>
@@ -30,6 +32,23 @@
           </div>
         </div>
       </nav>
+      <div id="class-rate"></div>
+
+      <button onclick="getConRate()">Get Class Con Rate</button>
+      <div id="result"></div>
+  
+      <script>
+          function getConRate() {
+              fetch('/all/7_11')
+              .then(function(response) {
+                  return response.json();
+              })
+              .then(function(data) {
+                  document.getElementById('result').innerHTML = JSON.stringify(data);
+              });
+          }
+      </script>
+
       All.html
     </div>
     <script
