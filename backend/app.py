@@ -41,6 +41,35 @@ def allowed_file(filename):
 def hello_world():
     return redirect(url_for('static', filename='./index.html'))
 
+# 60秒影像路徑+預測結果路徑輸出
+@app.route('/urls/<path:filepath>')
+def get_urls(filepath):
+    arr = []
+    for n in range(60):
+        arr.append({ 'image_url': f'http://127.0.0.1:5003/images/{filepath}/{n}.jpg',
+                     'txt_url': f'http://127.0.0.1:5003/txts/{filepath}/{n}.txt' })
+    return jsonify(arr)
+
+# 取得影像
+@app.route('/images/<path:file>')
+def get_images(file):
+    path = f'tmp/origin/{file}'
+    mimetype = 'image/jpg'
+    with open(path, 'rb') as f:
+        image_data = f.read()
+    return Response(image_data, mimetype=mimetype)
+
+# 取得標註資料
+@app.route('/txts/<path:file>')
+def get_txts(file):
+    path = f'tmp/txt/{file}'
+    arr = []
+    with open(path, 'rb') as f:
+        lines = f.readlines()
+        for line in lines:
+            arr.append(line.strip().decode('utf-8'))
+    return jsonify(arr)
+
 # 左右即時影片輸出
 @app.route('/video/<path:video>')
 def get_video(video):
