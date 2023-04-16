@@ -222,5 +222,4 @@ if __name__ == '__main__':
             os.makedirs(ff)
     with app.app_context():
         current_app.model = Detector()
-    # app.run(host='127.0.0.1', port=5003, debug=True)
-    app.run(host='localhost', port=5003, debug=True)
+    app.run(host='localhost', port=5501, debug=True)
