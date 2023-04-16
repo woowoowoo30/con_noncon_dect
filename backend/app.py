@@ -46,9 +46,9 @@ def hello_world():
 def get_urls(filepath):
     arr = []
     for n in range(60):
-        arr.append({ 'image_url': f'http://127.0.0.1:5003/images/{filepath}/{n}.jpg',
-                     'draw_url': f'http://127.0.0.1:5003/draws/{filepath}/{n}.jpg',
-                     'txt_url': f'http://127.0.0.1:5003/txts/{filepath}/{n}.txt' })
+        arr.append({ 'image_url': f'http://127.0.0.1:5501/images/{filepath}/{n}.jpg',
+                     'draw_url': f'http://127.0.0.1:5501/draws/{filepath}/{n}.jpg',
+                     'txt_url': f'http://127.0.0.1:5501/txts/{filepath}/{n}.txt' })
     return jsonify(arr)
 
 # 取得影像

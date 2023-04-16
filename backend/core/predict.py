@@ -23,7 +23,7 @@ def predict(dataset, model, ext):
         # 圖片
         x = cv2.imread(x)
         img_y, image_info = model.detect(x)
-        predict_info.append({ "url": f"http://127.0.0.1:5003/tmp/ct/{file_name}.{ext}", "info": image_info })
+        predict_info.append({ "url": f"http://127.0.0.1:5501/tmp/ct/{file_name}.{ext}", "info": image_info })
         cv2.imwrite(f'./tmp/draw/{file_name}.{ext}', img_y)
     else:
         # 影片
@@ -72,7 +72,7 @@ def predict(dataset, model, ext):
                 # 存儲圖像
                 cv2.imwrite(f'./tmp/draw/{file_name}/_{index}.jpg', video_y)
                 # 預測結果加入回傳陣列
-                predict_info.append({ "url": f"http://127.0.0.1:5003/tmp/ct/{file_name}/_{index}.jpg", "info": video_info })
+                predict_info.append({ "url": f"http://127.0.0.1:5501/tmp/ct/{file_name}/_{index}.jpg", "info": video_info })
                 # 影幀加入組合陣列
                 img_array.append(video_y)
             else: 
