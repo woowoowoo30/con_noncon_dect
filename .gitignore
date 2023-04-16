@@ -1,3 +1,5 @@
 backend/video/
 backend/weights/
 tmp/
+
+*.pyc
