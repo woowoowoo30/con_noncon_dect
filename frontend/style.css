@@ -1,0 +1,6 @@
+body {
+    background-color: #ebb65b; /* 背景顏色 */
+    background-image: url("Background/Pencil.png"); /* 背景圖片 */
+   /* background-repeat: no-repeat;  背景圖片是否重複 */
+    background-size: 10% auto; /* 背景圖片的覆蓋方式 */
+  }

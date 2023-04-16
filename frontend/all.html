@@ -10,26 +10,45 @@
       integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
       crossorigin="anonymous"
     />
+    <!--<script src="all.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <div>
       <nav class="navbar navbar-expand-lg bg-warning">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/index.html">他媽什麼時候寫得完</a>
+          <a class="navbar-brand" href="/frontend/index.html">他媽什麼時候寫得完</a>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="/index.html">
+                <a class="nav-link" aria-current="page" href="/frontend/index.html">
                   個別班級
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="/all.html">總覽</a>
+                <a class="nav-link active" href="/frontend/all.html">總覽</a>
               </li>
             </ul>
           </div>
         </div>
       </nav>
+      <div id="class-rate"></div>
+
+      <button onclick="getConRate()">Get Class Con Rate</button>
+      <div id="result"></div>
+  
+      <script>
+          function getConRate() {
+              fetch('/all/7_11')
+              .then(function(response) {
+                  return response.json();
+              })
+              .then(function(data) {
+                  document.getElementById('result').innerHTML = JSON.stringify(data);
+              });
+          }
+      </script>
+
       All.html
     </div>
     <script
