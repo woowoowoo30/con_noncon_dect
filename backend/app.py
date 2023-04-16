@@ -196,20 +196,25 @@ def all(class_name=None):
 
 @app.route("/retrain", methods=['POST'])
 def retrain():
-    body = json.loads(request.data)
-    datas = body["data"]
-    for data in datas:
-        # 把檔案複製到再次訓練區
-        split_url = data["url"].split('/')
-        file_name = f"{split_url[-1]}"
-        base, ext = file_name.split('.')
-        ori_path = f'tmp/origin/{data["url"]}'
-        new_path = f'tmp/retrain/{file_name}'
-        shutil.copy2(f'{ori_path}', f'{new_path}')
-        # 儲存標註檔
-        with open(f'{new_path}/{base}.txt', 'w') as f:
-            for line in data["info"]:
-                f.write(f'{line}\n')
+    import calendar
+    import time
+    current_GMT = time.gmtime()
+    time_stamp = calendar.timegm(current_GMT)
+
+    data = json.loads(request.data)
+    # 把檔案複製到再次訓練區
+    split_url = data["url"].split('/')
+    cls_name = f"{split_url[-3]}"
+    direction = f"{split_url[-2]}"
+    file_name = f"{split_url[-1]}"
+    base, ext = file_name.split('.')
+    ori_path = f'tmp/origin/{cls_name}/{direction}/{file_name}'
+    new_path = f'tmp/retrain/{time_stamp}.{ext}'
+    shutil.copy2(f'{ori_path}', f'{new_path}')
+    # 儲存標註檔
+    with open(f'tmp/retrain/{time_stamp}.txt', 'w') as f:
+        for line in data["info"]:
+            f.write(f'{line}\n')
     return jsonify({ "success": 1 })
 
 if __name__ == '__main__':
