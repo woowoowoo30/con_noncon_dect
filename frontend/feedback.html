@@ -10,33 +10,384 @@
       integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
       crossorigin="anonymous"
     />
+    <style>
+      .cover {
+        top: Opx;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .cover:hover {
+        transition: all 0.3s;
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+      }
+    </style>
   </head>
   <body>
     <div>
       <nav class="navbar navbar-expand-lg bg-warning">
         <div class="container-fluid">
           <a class="navbar-brand">他媽什麼時候寫得完</a>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <!--<a class="nav-link" aria-current="page" href="/frontend/index.html">
-                  個別班級
-                </a>-->
-              </li>
-              <li class="nav-item">
-                <!--<a class="nav-link active" href="/frontend/all.html">總覽</a>-->
-              </li>
-            </ul>
-          </div>
         </div>
       </nav>
-      請協助手動標註沒有辨識到的人臉,若無符合請在下方挑選別張,謝謝!
-      <button type="submit" class="btn btn-primary" onclick="navigateToPage()" >完成</button>
-        <script>
-		        function navigateToPage() {
-			      window.location.href = "index.html";
-		        }
-        </script>
+      <div class="container-fluid">
+        <div class="mt-2 mb-3">
+          <button
+            type="submit"
+            class="btn btn-secondary btn-sm"
+            onclick="navigateToPage()"
+          >
+            返回
+          </button>
+          請協助手動標註沒有辨識到的人臉,謝謝!
+        </div>
+        <nav class="mb-2">
+          <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <button
+              class="nav-link active"
+              id="nav-left-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-left"
+              type="button"
+              role="tab"
+              aria-controls="nav-left"
+              aria-selected="true"
+            >
+              左
+            </button>
+            <button
+              class="nav-link"
+              id="nav-right-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#nav-right"
+              type="button"
+              role="tab"
+              aria-controls="nav-right"
+              aria-selected="false"
+            >
+              右
+            </button>
+          </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+          <div
+            class="tab-pane fade show active"
+            id="nav-left"
+            role="tabpanel"
+            aria-labelledby="nav-left-tab"
+            tabindex="0"
+          ></div>
+          <div
+            class="tab-pane fade"
+            id="nav-right"
+            role="tabpanel"
+            aria-labelledby="nav-right-tab"
+            tabindex="0"
+          ></div>
+        </div>
+      </div>
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="LabelModal"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="LabelModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1
+                class="modal-title fs-5"
+                style="margin-right: 12px"
+                id="LabelModalLabel"
+              >
+                進行標註
+              </h1>
+              <select class="form-select w-25">
+                <option value="0">專心(黃)</option>
+                <option value="1">不專心(粉)</option>
+              </select>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" onclick="reTrain()">
+                送出
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script>
+        function navigateToPage() {
+          window.location.href = "index.html";
+        }
+
+        const GetReponse = async function (url, responseType) {
+          return new Promise((resolve, reject) => {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.responseType = responseType;
+            xhr.onload = function () {
+              if (this.status === 200) {
+                var str = JSON.parse(xhr.responseText);
+                resolve(str);
+              } else {
+                reject(this.statusText);
+              }
+            };
+            xhr.onerror = function () {
+              reject(this.statusText);
+            };
+            xhr.send();
+          });
+        };
+
+        window.onload = async function () {
+          try {
+            const leftRes = await GetReponse(
+              "http://localhost:5501/urls/7_11/left",
+              "text/json"
+            );
+            SetLeft(leftRes);
+            const rightRes = await GetReponse(
+              "http://localhost:5501/urls/7_11/right",
+              "text/json"
+            );
+            SetRight(rightRes);
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+        const SetLeft = function (res) {
+          var html = "<div class='row'>";
+          res.forEach((item) => {
+            html += `
+                    <div class="col-md-3 mb-3">
+                      <div class="card">
+                        <img
+                          src="${item.draw_url}"
+                          class="card-img-top"
+                        />
+                        <div class="cover">
+                          <button type="button" class="btn btn-outline-light" onclick="GoLabel('${item.image_url}', '${item.txt_url}')">進行標註</button>
+                        </div>
+                      </div>
+                    </div>`;
+          });
+          html += "</div>";
+          document.querySelector("#nav-left").innerHTML = html;
+        };
+
+        const SetRight = function (res) {
+          var html = "<div class='row'>";
+          res.forEach((item) => {
+            html += `
+                    <div class="col-md-3 mb-3">
+                      <div class="card">
+                        <img
+                          src="${item.draw_url}"
+                          class="card-img-top"
+                        />
+                        <div class="cover">
+                          <button type="button" class="btn btn-outline-light" onclick="GoLabel('${item.image_url}', '${item.txt_url}')">進行標註</button>
+                        </div>
+                      </div>
+                    </div>`;
+          });
+          html += "</div>";
+          document.querySelector("#nav-right").innerHTML = html;
+        };
+
+        const GoLabel = async function (image_url, txt_url) {
+          document.querySelector(
+            ".modal-body"
+          ).innerHTML = `<canvas id="myCanvas" data-url="${image_url}"></canvas>`;
+
+          init();
+
+          await loadImage(image_url);
+          await loadDatas(txt_url);
+
+          draw();
+
+          const myModal = new bootstrap.Modal(
+            document.getElementById("LabelModal")
+          );
+          myModal.show();
+        };
+
+        let canvas;
+        let ctx;
+        let isDrawing;
+        let startX;
+        let startY;
+        let image;
+        let areas;
+        const colors = ["#f0ff00", "#ff00bf"];
+
+        const init = function () {
+          this.canvas = document.getElementById("myCanvas");
+          this.ctx = this.canvas.getContext("2d");
+          this.isDrawing = false;
+          this.startX = 0;
+          this.startY = 0;
+
+          this.canvas.addEventListener(
+            "mousedown",
+            (e) => {
+              this.isDrawing = true;
+              this.startX = event.offsetX;
+              this.startY = event.offsetY;
+            },
+            false
+          );
+          this.canvas.addEventListener(
+            "mouseup",
+            (e) => {
+              if (this.isDrawing) {
+                const x = event.offsetX;
+                const y = event.offsetY;
+                const w = x - this.startX;
+                const h = y - this.startY;
+                this.areas.push({
+                  cls: parseInt(document.querySelector(".form-select").value),
+                  x: this.startX,
+                  y: this.startY,
+                  w,
+                  h,
+                });
+                this.isDrawing = false;
+              }
+            },
+            false
+          );
+          this.canvas.addEventListener(
+            "mousemove",
+            function (e) {
+              draw();
+            },
+            false
+          );
+        };
+
+        const clear = function () {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        };
+
+        const loadImage = async function (url) {
+          var img = new Image();
+          var imgLoaded = new Promise((resolve, reject) => {
+            img.onload = () => {
+              this.canvas.width = img.width;
+              this.canvas.height = img.height;
+              this.image = img;
+              resolve();
+            };
+            img.onerror = reject;
+          });
+          img.src = url;
+          await imgLoaded;
+        };
+
+        const drawImage = function () {
+          this.ctx.drawImage(this.image, 0, 0);
+        };
+
+        const loadDatas = async function (url) {
+          try {
+            const res = await GetReponse(url, "text/json");
+            arr = [];
+            res.forEach(function (item) {
+              const yolo = item.split(" ");
+              const cls = yolo[0];
+
+              let x = yolo[1];
+              let y = yolo[2];
+              let w = yolo[3];
+              let h = yolo[4];
+
+              const dw = this.canvas.width;
+              const dh = this.canvas.height;
+              x = parseInt(x * dw);
+              y = parseInt(y * dh);
+              w = parseInt(w * dw);
+              h = parseInt(h * dh);
+              x = x - w / 2;
+              y = y - h / 2;
+
+              arr.push({ cls, x, y, w, h });
+            });
+            this.areas = arr;
+          } catch (error) {
+            console.error(error);
+          }
+        };
+
+        const drawAreas = function () {
+          this.ctx.lineWidth = 2;
+          this.areas.forEach((area) => {
+            this.ctx.strokeStyle = colors[area.cls];
+            this.ctx.strokeRect(area.x, area.y, area.w, area.h);
+          });
+        };
+
+        const draw = function () {
+          clear();
+          drawImage();
+          drawAreas();
+        };
+
+        const reTrain = function () {
+          const info = this.areas.map((area) => {
+            const cls = area.cls;
+            let { x, y, w, h } = area;
+            const dw = 1 / this.canvas.width;
+            const dh = 1 / this.canvas.height;
+
+            x = x + w / 2;
+            y = y + h / 2;
+
+            x = x * dw;
+            y = y * dh;
+            w = w * dw;
+            h = h * dh;
+            return `${cls} ${x} ${y} ${w} ${h}`;
+          });
+
+          const data = {
+            url: document.querySelector("#myCanvas").dataset.url,
+            info,
+          };
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "http://127.0.0.1:5501/retrain", true);
+          xhr.onload = function () {
+            var str = JSON.parse(xhr.responseText);
+            console.log(str);
+          };
+          xhr.onerror = function () {
+            console.log(this.statusText);
+          };
+          xhr.send(JSON.stringify(data));
+        };
+      </script>
     </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
