@@ -47,6 +47,7 @@ def get_urls(filepath):
     arr = []
     for n in range(60):
         arr.append({ 'image_url': f'http://127.0.0.1:5003/images/{filepath}/{n}.jpg',
+                     'draw_url': f'http://127.0.0.1:5003/draws/{filepath}/{n}.jpg',
                      'txt_url': f'http://127.0.0.1:5003/txts/{filepath}/{n}.txt' })
     return jsonify(arr)
 
@@ -54,6 +55,15 @@ def get_urls(filepath):
 @app.route('/images/<path:file>')
 def get_images(file):
     path = f'tmp/origin/{file}'
+    mimetype = 'image/jpg'
+    with open(path, 'rb') as f:
+        image_data = f.read()
+    return Response(image_data, mimetype=mimetype)
+
+# 取得預測影像
+@app.route('/draws/<path:file>')
+def get_draws(file):
+    path = f'tmp/draw/{file}'
     mimetype = 'image/jpg'
     with open(path, 'rb') as f:
         image_data = f.read()
