@@ -41,6 +41,21 @@ def allowed_file(filename):
 def hello_world():
     return redirect(url_for('static', filename='./index.html'))
 
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    file = request.files['file']
+    # print(datetime.datetime.now(), file.filename)
+    if file and allowed_file(file.filename):
+        src_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(src_path)
+        shutil.copy(src_path, './tmp/ct')
+        image_path = os.path.join('./tmp/ct', file.filename)
+        pid, predict_info = core.main.c_main(image_path, current_app.model, file.filename.rsplit('.', 1)[1])
+        return jsonify({'status': 1,
+                        'image_info': predict_info})
+
+    return jsonify({'status': 0})
+
 # 60秒影像路徑+預測結果路徑輸出
 @app.route('/urls/<path:filepath>')
 def get_urls(filepath):
