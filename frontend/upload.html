@@ -56,6 +56,33 @@
             </div>
           </div>
         </div>
+
+        <div
+          class="modal fade"
+          id="myModal"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+              <div
+                style="
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  margin: 24px 0;
+                  flex-direction: column;
+                "
+              >
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+                辨識中
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <script
@@ -64,18 +91,30 @@
       crossorigin="anonymous"
     ></script>
     <script>
+      const loading = new bootstrap.Modal("#myModal", {
+        backdrop: false,
+        focus: false,
+      });
       document.getElementById("search").addEventListener("click", function () {
-        // 創建一個 XMLHTTPRequest 對象，向 app.py 發送請求
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "http://localhost:5501/upload", true);
-        xhr.onload = function () {
-          if (this.status === 200) {
-            alert("辨識完成");
-          }
-        };
-        var formData = new FormData();
-        formData.append("file", document.querySelector("#myfile").files[0]);
-        xhr.send(formData);
+        const file = document.querySelector("#myfile").files[0];
+        if (file) {
+          // 創建一個 XMLHTTPRequest 對象，向 app.py 發送請求
+          var xhr = new XMLHttpRequest();
+          xhr.open("POST", "http://localhost:5501/upload", true);
+          xhr.onload = function () {
+            if (this.status === 200) {
+              alert("辨識完成");
+              loading.hide();
+              window.location = "/index.html";
+            }
+          };
+          var formData = new FormData();
+          formData.append("file", document.querySelector("#myfile").files[0]);
+          xhr.send(formData);
+          loading.show();
+        } else {
+          alert("請上傳影片");
+        }
       });
     </script>
   </body>
