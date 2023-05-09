@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>上課專心檢測</title>
+    <title>上課專心比例檢測</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -12,12 +12,13 @@
     />
     <!--<script src="all.js"></script>-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div>
       <nav class="navbar navbar-expand-lg bg-warning">
         <div class="container-fluid">
-          <a class="navbar-brand" href="/index.html">他媽什麼時候寫得完</a>
+          <a class="navbar-brand" href="/index.html">上課專心比例檢測</a>
           <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
               <li class="nav-item">
@@ -28,29 +29,54 @@
               <li class="nav-item">
                 <a class="nav-link active" href="/all.html">總覽</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/upload.html">上傳</a>
+              </li>
             </ul>
           </div>
         </div>
       </nav>
       <div id="class-rate"></div>
-
-      <button onclick="getConRate()">Get Class Con Rate</button>
       <div id="result"></div>
+      <table class="table table-primary">
+        <thead>
+          <tr class="table table-light">
+            <th>班級名稱</th>
+            <th>專心比例</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+        </tbody>
+        <span style="color:rgb(255, 0, 0);"> 此畫面每1分鐘更新一次 </span>
+      </table>
 
       <script>
-        function getConRate() {
-          fetch("/all/7_11")
-            .then(function (response) {
-              return response.json();
-            })
-            .then(function (data) {
-              document.getElementById("result").innerHTML =
-                JSON.stringify(data);
-            });
-        }
-      </script>
-
-      All.html
+      var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:5501/all");
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+            var tableBody = document.getElementById("table-body");
+            for (var key in data) {
+              var row = document.createElement("tr");
+              var nameCell = document.createElement("td");
+              nameCell.textContent = key.replace("_", "年") + "班";
+              var rateCell = document.createElement("td");
+              rateCell.textContent = (data[key] * 100).toFixed(2) + "%";
+              row.appendChild(nameCell);
+              row.appendChild(rateCell);
+              tableBody.appendChild(row);
+            }
+          } else {
+            console.log("Request failed. Returned status of " + xhr.status);
+          }
+        };
+        xhr.send();
+        </script>
+        <script>
+        setInterval(function() {
+          location.reload();
+        }, 60000);</script>
     </div>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"

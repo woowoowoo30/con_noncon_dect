@@ -57,8 +57,25 @@
                 <button type="submit" class="btn btn-primary" id="search">
                   查詢
                 </button>
-
-                <div>Name: <span id="rate"></span></div>
+<script>document.getElementById("search").addEventListener("click", function() {
+var input = document.getElementById("inputClassName").value;
+if (!input.trim()) {
+  window.alert("請輸入班級編號 範例:若為7年1班,則輸入0701");
+  return;
+}
+var xhr = new XMLHttpRequest();
+xhr.open("GET", "http://localhost:5501/all/7_11");
+xhr.onload = function() {
+  if (xhr.status === 200) {
+    var data = JSON.parse(xhr.responseText);
+    var rate = (data.rate * 100).toFixed(0) + "%";
+    document.getElementById("rate").innerHTML = rate;
+  } else {
+    console.log("Request failed. Returned status of " + xhr.status);
+  }
+};
+xhr.send();})</script>
+                <div style="color:rgb(255, 0, 0);">此班級專心比例:<span id="rate" style="color:rgb(255, 0, 0);"></span></div>
               </div>
             </div>
             <div class="row">
@@ -75,6 +92,11 @@
                     .getElementById("search")
                     .addEventListener("click", function () {
                       // 創建一個 XMLHTTPRequest 對象，向 app.py 發送請求
+                      var input = document.getElementById("inputClassName").value;
+                      if (!input.trim()) {
+                      
+                       return;
+                       }
                       var xhr = new XMLHttpRequest();
                       xhr.open(
                         "GET",
@@ -92,6 +114,7 @@
                       };
                       xhr.send();
                     });
+                    
                 </script>
 
                 <video
@@ -106,6 +129,11 @@
                     .getElementById("search")
                     .addEventListener("click", function () {
                       // 創建一個 XMLHTTPRequest 對象，向 app.py 發送請求
+                      var input = document.getElementById("inputClassName").value;
+                      if (!input.trim()) {
+                       
+                       return;
+                       }    
                       var xhr = new XMLHttpRequest();
                       xhr.open(
                         "GET",

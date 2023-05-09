@@ -35,7 +35,7 @@
     <div>
       <nav class="navbar navbar-expand-lg bg-warning">
         <div class="container-fluid">
-          <a class="navbar-brand">他媽什麼時候寫得完</a>
+          <a class="navbar-brand">上課專心比例檢測</a>
         </div>
       </nav>
       <div class="container-fluid">
@@ -386,6 +386,8 @@
             console.log(this.statusText);
           };
           xhr.send(JSON.stringify(data));
+          window.alert("已收到您的回饋,感謝您的幫助!");
+          window.location.href = "feedback.html";
         };
       </script>
     </div>
