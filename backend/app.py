@@ -52,7 +52,8 @@ def upload_file():
         image_path = os.path.join('./tmp/ct', file.filename)
         pid, predict_info = core.main.c_main(image_path, current_app.model, file.filename.rsplit('.', 1)[1])
         return jsonify({'status': 1,
-                        'image_info': predict_info})
+                        'image_info': predict_info,
+                        'url': f"http://127.0.0.1:5501/draws/{file.filename}"})
 
     return jsonify({'status': 0})
 
@@ -79,7 +80,8 @@ def get_images(file):
 @app.route('/draws/<path:file>')
 def get_draws(file):
     path = f'tmp/draw/{file}'
-    mimetype = 'image/jpg'
+    mimetype = 'video/mp4'
+    print(path)
     with open(path, 'rb') as f:
         image_data = f.read()
     return Response(image_data, mimetype=mimetype)

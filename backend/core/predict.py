@@ -37,7 +37,7 @@ def predict(dataset, model, ext):
         print(frame_width, frame_height)
 
         # 初始化圖片組合影片套件
-        fourcc = cv2.VideoWriter_fourcc(*'avc1')
+        fourcc = cv2.VideoWriter_fourcc(*'h264')
         videoWriter = cv2.VideoWriter(f'./tmp/draw/{file_name}.{ext}', fourcc, frame_fps, (frame_width, frame_height))
         # 要組合的所有圖片
         img_array = []
